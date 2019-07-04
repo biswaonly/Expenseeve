@@ -1,0 +1,12 @@
+.App {
+  text-align: center;
+  background-color: aquamarine;
+}
+.sup_cont {
+  display: flex;
+  height: calc(100vh - 60px);
+}
+.container {
+  width: calc(100vw - 200px);
+  background-color: wheat;
+}

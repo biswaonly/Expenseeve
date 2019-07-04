@@ -1,0 +1,16 @@
+.left_panel {
+  width: 200px;
+  height: 100%;
+  background-color: darkslategray;
+  color: white;
+}
+.left_panel_btn {
+  margin: 10px 0;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px;
+}
+.left_panel_btn:hover,
+.left_panel_btn:active {
+  background-color: darkblue;
+}
