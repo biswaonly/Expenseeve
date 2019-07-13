@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const config = require("config");
 
+mongoose.set('bufferCommands', false);
+
 // DB config
 const db = config.get("mongoURI");
 
@@ -12,6 +14,9 @@ const connectDB = async () => {
       useCreateIndex: true,
       useFindAndModify: false
     });
+    console.info(`DB connected: ${db}`)
+
+    
   } catch (err) {
     console.error(err.message);
     // Exit Process with Failure

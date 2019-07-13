@@ -2,17 +2,17 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const PostSchema = new Schema({
+const ExpenseSchema = new Schema({
   category: {
     type: String,
     required: true
   },
-  item: {
+  itemName: {
     type: String,
     required: true
   },
-  amount: {
-    type: String,
+  price: {
+    type: Number,
     required: true
   },
   deleted: {
@@ -20,8 +20,8 @@ const PostSchema = new Schema({
     required: true
   },
   date: {
-    type: Date,
-    default: Date.now
+    type: String,
+    required: true
   },
   userID: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,4 +29,4 @@ const PostSchema = new Schema({
   }
 });
 
-module.exports = Post = mongoose.model("post", PostSchema);
+module.exports = Expense = mongoose.model("expense", ExpenseSchema);

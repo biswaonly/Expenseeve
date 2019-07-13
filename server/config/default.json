@@ -1,4 +1,7 @@
 {
-	"mongoURI" : "mongodb+srv://biswaonly:iambiswajit@biswa-db-dwjzc.mongodb.net/test?retryWrites=true",
-	"jwtSecret" : "secrettoken"
+  "mongoURI": "mongodb+srv://biswaonly:iambiswajit@biswa-db-dwjzc.mongodb.net/test?retryWrites=true",
+  "jwtSecret": "secrettoken",
+  "imgbbKey": "c6896ec6b5205f80c6d3494392f30211",
+  "imgurId": "d14fc9df79960b7",
+  "imgurSecret": "ce6bfe50b60758ef3e8d30fda7c990e778e1d476"
 }

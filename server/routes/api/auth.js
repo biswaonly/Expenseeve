@@ -27,7 +27,9 @@ router.post(
   "/",
   [
     check("email", "Please Enter a valid email").isEmail(),
-    check("password", "Password should be min 6 character").exists()
+    check("password", "Password is Empty")
+      .not()
+      .isEmpty()
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -38,9 +40,12 @@ router.post(
     }
 
     const { email, password } = req.body;
+    console.log("IUJGoid aoisho ==  /// / // / / // / ", email, password);
 
     try {
       let user = await User.findOne({ email });
+
+      console.log(user);
 
       if (!user) {
         return res
@@ -56,12 +61,12 @@ router.post(
           .json({ errors: [{ msg: "Password do not match" }] });
       }
 
+      // JWT token generate
       const payload = {
         user: {
           id: user.id
         }
       };
-
       jwt.sign(
         payload,
         config.get("jwtSecret"),
@@ -73,7 +78,7 @@ router.post(
       );
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server Error");
+      res.status(500).json({ errors: [{ msg: err.message }] });
     }
   }
 );
@@ -96,14 +101,20 @@ router.post(
   async (req, res) => {
     // Check Errors
     const errors = validationResult(req);
+    console.log(errors);
+
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { name, email, password } = req.body;
+    console.log(name, email, password);
+
     try {
       // Check email already exists or not
       let user = await User.findOne({ email });
+      console.log(user);
+
       if (user) {
         return res
           .status(400)

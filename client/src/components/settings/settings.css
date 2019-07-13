@@ -1,0 +1,40 @@
+/* SETTINGS */
+.settings {
+  margin: 40px auto;
+  width: 500px;
+}
+.settings-form {
+  text-align: left;
+  background-color: lemonchiffon;
+}
+.label {
+  display: inline-block;
+  width: 100px;
+  height: 25px;
+  margin: 20px;
+  background-color: yellowgreen;
+}
+.settings-form-input {
+  background: transparent;
+  border: 0px;
+  border-bottom: 1px solid black;
+  text-align: right;
+  outline: none;
+  width: 200px;
+}
+
+.cat-card {
+  display: flex;
+  width: 300px;
+  background-color: goldenrod;
+}
+
+/* CAT-CARD-VIEW */
+.cat-card-name {
+  width: 150px;
+}
+.cat-card-icon {
+  margin: 0 20px;
+  background-color: red;
+  cursor: pointer;
+}

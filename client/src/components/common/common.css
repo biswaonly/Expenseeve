@@ -1,0 +1,31 @@
+/* ALERT */
+.alert {
+  padding: 8px;
+  margin: 10px 0;
+  background: red;
+  color: #fff;
+}
+
+/* HEADER */
+.header {
+  height: 60px;
+  background-color: cadetblue;
+}
+.header h1 {
+  padding: 10px;
+  font-weight: 900;
+}
+
+/* LEFT PANEL */
+.left-panel {
+  width: 200px;
+  height: 100%;
+  background-color: darkslategray;
+  color: white;
+}
+.left-panel-ele {
+  margin: 10px 0;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px;
+}

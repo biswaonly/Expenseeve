@@ -23,7 +23,6 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     let budget = await Budget.findOne({ userID: req.body.id });
-    // console.log("BUDGET ========", budget);
 
     res.json(budget);
   } catch (err) {
@@ -50,6 +49,13 @@ router.post(
     }
 
     const { id, amount } = req.body;
+
+    if (amount < 0) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Amount cant go negetive" }] });
+    }
+
     try {
       let newBudget = await Budget.findOne({ userID: id });
 
@@ -72,7 +78,7 @@ router.post(
 
 // @route 	POST api/budget/categories
 // @desc 		Add new Categories
-// @access 	Public && Private
+// @access 	Private
 router.post(
   "/categories",
   [
@@ -111,5 +117,81 @@ router.post(
     }
   }
 );
+
+// @route 	POST api/budget/edit-cat
+// @desc 		Add new Categories
+// @access 	Public && Private
+router.post(
+  "/edit-cat",
+  [
+    check("newCat", "Nothing there")
+      .not()
+      .isEmpty()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { oldCat, newCat, id } = req.body;
+
+    console.log("ALL DATAS ======= ", oldCat, newCat, id);
+
+    try {
+      let newBudget = await Budget.findOne({ userID: id });
+      if (!newBudget) {
+        return res.status(400).json({ errors: [{ msg: "Something Wrong" }] });
+      }
+
+      let index = newBudget.categories.indexOf(oldCat);
+
+      newBudget.categories.fill(newCat, index, index + 1);
+
+      let buzz = await Budget.findByIdAndUpdate(
+        { _id: newBudget._id },
+        { $set: { categories: newBudget.categories } },
+        { new: true }
+      );
+
+      await buzz.save();
+
+      res.json(newBudget.categories);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
+// @route 	POST api/budget/del-cat
+// @desc 		Delete a Category
+// @access 	Private
+router.post("/del-cat", async (req, res) => {
+  const { id, category } = req.body;
+  try {
+    let newBudget = await Budget.findOne({ userID: id });
+    if (!newBudget) {
+      return res.status(400).json({ errors: [{ msg: "Something Wrong" }] });
+    }
+
+    let index = newBudget.categories.indexOf(category);
+
+    newBudget.categories.splice(index, 1);
+
+    let buzz = await Budget.findByIdAndUpdate(
+      { _id: newBudget._id },
+      { $set: { categories: newBudget.categories } },
+      { new: true }
+    );
+
+    await buzz.save();
+
+    res.json(newBudget.categories);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
