@@ -26,8 +26,6 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export type LOGIN_SUCCESS = typeof LOGIN_SUCCESS;
 export const LOGIN_FAIL = "LOGIN_FAIL";
 export type LOGIN_FAIL = typeof LOGIN_FAIL;
-export const REGISTER_FAIL = "REGISTER_FAIL";
-export type REGISTER_FAIL = typeof REGISTER_FAIL;
 export const USER_LOADED = "USER_LOADED";
 export type USER_LOADED = typeof USER_LOADED;
 export const AUTH_ERROR = "AUTH_ERROR";
@@ -36,9 +34,23 @@ export type AUTH_ERROR = typeof AUTH_ERROR;
 /* ===== BUDGET ===== */
 export const EDIT_CATEGORY = "EDIT_CATEGORY";
 export type EDIT_CATEGORY = typeof EDIT_CATEGORY;
+export const DELETE_CATEGORY = "DELETE_CATEGORY";
+export type DELETE_CATEGORY = typeof DELETE_CATEGORY;
+export const UNDO_DELETE_CATEGORY = "UNDO_DELETE_CATEGORY";
+export type UNDO_DELETE_CATEGORY = typeof UNDO_DELETE_CATEGORY;
 
 /* ===== EXPENSES ==== */
 export const ADD_NEW_EXPENSES = "ADD_NEW_EXPENSES";
 export type ADD_NEW_EXPENSES = typeof ADD_NEW_EXPENSES;
 export const GET_EXPENSES = "GET_EXPENSES";
 export type GET_EXPENSES = typeof GET_EXPENSES;
+export const DELETE_EXPENSES = "DELETE_EXPENSES";
+export type DELETE_EXPENSES = typeof DELETE_EXPENSES;
+export const UNDO_DELETE_EXPENSES = "UNDO_DELETE_EXPENSES";
+export type UNDO_DELETE_EXPENSES = typeof UNDO_DELETE_EXPENSES;
+
+/* ===== TIMER ALERT ===== */
+export const SET_TIMER_ALERT = "SET_TIMER_ALERT";
+export type SET_TIMER_ALERT = typeof SET_TIMER_ALERT;
+export const REMOVE_TIMER_ALERT = "REMOVE_TIMER_ALERT";
+export type REMOVE_TIMER_ALERT = typeof REMOVE_TIMER_ALERT;

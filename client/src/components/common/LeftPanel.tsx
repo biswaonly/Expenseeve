@@ -4,7 +4,6 @@ import "./common.css";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 interface Props extends RouteComponentProps<any> {
-  /* other props for ChildComponent */
   isAuthenticated: boolean;
 }
 

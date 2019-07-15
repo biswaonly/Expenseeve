@@ -1,28 +1,16 @@
 const express = require("express");
 const { check, validationResult } = require("express-validator/check");
-const config = require("config");
 
 const router = express.Router();
 const Budget = require("../../models/Budget");
+const Exp = require("../../models/Expenses");
 
 // @route 	GET api/budget
-// @desc 		Test
-// @access 	Public
-router.get("/", async (req, res) => {
-  try {
-    res.json({ msg: "YOU GET IT" });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-// @route 	POST api/budget
-// @desc 		send data to client, DID MOUNT
+// @desc 		send categories to client, DID MOUNT
 // @access 	Private
-router.post("/", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    let budget = await Budget.findOne({ userID: req.body.id });
+    let budget = await Budget.findOne({ userID: req.params.id });
 
     res.json(budget);
   } catch (err) {
@@ -31,11 +19,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-// @route 	POST api/budget/total-exp
-// @desc 		send Current User Profile
-// @access 	Public && Private
+// @route 	POST api/budget
+// @desc 		add or edit budget amount
+// @access 	Private
 router.post(
-  "/total-exp",
+  "/",
   [
     check("amount", "Please enter amount")
       .not()
@@ -76,99 +64,71 @@ router.post(
   }
 );
 
-// @route 	POST api/budget/categories
+// @route 	PUT api/budget
 // @desc 		Add new Categories
 // @access 	Private
-router.post(
-  "/categories",
-  [
-    check("category", "Nothing there")
-      .not()
-      .isEmpty()
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+router.put("/:id/:category", async (req, res) => {
+  const { id, category } = req.params;
+  try {
+    let newBudget = await Budget.findOne({ userID: id });
+    if (!newBudget) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Please set Budget amount First" }] });
+    }
+    if (newBudget.categories.includes(category)) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Can not enter same category twice" }] });
     }
 
-    const { id, category } = req.body;
-    try {
-      let newBudget = await Budget.findOne({ userID: id });
-      if (!newBudget) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Please set Budget amount First" }] });
-      }
-      if (newBudget.categories.includes(category)) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Can not enter same category twice" }] });
-      }
+    newBudget.categories.push(category);
 
-      newBudget.categories.push(category);
+    await newBudget.save();
 
-      await newBudget.save();
-
-      res.json(newBudget.categories);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server Error");
-    }
+    res.json(newBudget.categories);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
   }
-);
+});
 
-// @route 	POST api/budget/edit-cat
-// @desc 		Add new Categories
-// @access 	Public && Private
-router.post(
-  "/edit-cat",
-  [
-    check("newCat", "Nothing there")
-      .not()
-      .isEmpty()
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+// @route 	PUT api/budget/edit-cat
+// @desc 		Edit a Categories
+// @access 	Private
+router.put("/edit-cat/:id/:oldCat/:newCat", async (req, res) => {
+  const { oldCat, newCat, id } = req.params;
+
+  try {
+    let newBudget = await Budget.findOne({ userID: id });
+    if (!newBudget) {
+      return res.status(400).json({ errors: [{ msg: "Something Wrong" }] });
     }
 
-    const { oldCat, newCat, id } = req.body;
+    let index = newBudget.categories.indexOf(oldCat);
 
-    console.log("ALL DATAS ======= ", oldCat, newCat, id);
+    newBudget.categories.fill(newCat, index, index + 1);
 
-    try {
-      let newBudget = await Budget.findOne({ userID: id });
-      if (!newBudget) {
-        return res.status(400).json({ errors: [{ msg: "Something Wrong" }] });
-      }
+    let buzz = await Budget.findByIdAndUpdate(
+      { _id: newBudget._id },
+      { $set: { categories: newBudget.categories } },
+      { new: true }
+    );
 
-      let index = newBudget.categories.indexOf(oldCat);
+    await buzz.save();
 
-      newBudget.categories.fill(newCat, index, index + 1);
-
-      let buzz = await Budget.findByIdAndUpdate(
-        { _id: newBudget._id },
-        { $set: { categories: newBudget.categories } },
-        { new: true }
-      );
-
-      await buzz.save();
-
-      res.json(newBudget.categories);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send("Server Error");
-    }
+    res.json(newBudget.categories);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
   }
-);
+});
 
-// @route 	POST api/budget/del-cat
+// @route 	DELETE api/budget
 // @desc 		Delete a Category
 // @access 	Private
-router.post("/del-cat", async (req, res) => {
-  const { id, category } = req.body;
+router.delete("/:id/:category", async (req, res) => {
+  const { id, category } = req.params;
   try {
     let newBudget = await Budget.findOne({ userID: id });
     if (!newBudget) {
@@ -179,13 +139,13 @@ router.post("/del-cat", async (req, res) => {
 
     newBudget.categories.splice(index, 1);
 
-    let buzz = await Budget.findByIdAndUpdate(
+    await Exp.updateMany({ userID: id, category }, { deleted: true });
+
+    await Budget.findByIdAndUpdate(
       { _id: newBudget._id },
       { $set: { categories: newBudget.categories } },
       { new: true }
     );
-
-    await buzz.save();
 
     res.json(newBudget.categories);
   } catch (err) {

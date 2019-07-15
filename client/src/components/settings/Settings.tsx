@@ -5,12 +5,14 @@ import { connect } from "react-redux";
 import { updateTotalExp, updateNewCategories } from "../../actions/budget";
 import CatTable from "./CatTable";
 import "./settings.css";
+import { setAlert } from "../../actions/alert";
 
 interface Props {
   _id: string;
   updateTotalExp: any;
   updateNewCategories: any;
   amount: number;
+  setAlert: any;
 }
 interface IState {
   budgetAmount: number | undefined;
@@ -21,10 +23,9 @@ const Settings: React.SFC<Props> = ({
   _id,
   updateTotalExp,
   updateNewCategories,
-  amount
+  amount,
+  setAlert
 }) => {
-  console.log("AMOUNT =========== ============== ", typeof amount);
-
   // Set State
   const [state, setState] = useState<IState>({
     budgetAmount: undefined,
@@ -38,26 +39,26 @@ const Settings: React.SFC<Props> = ({
   }, [amount]);
 
   const onAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      budgetAmount: parseInt(e.target.value)
-    });
+    setState({ ...state, budgetAmount: parseInt(e.target.value) });
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      category: e.target.value
-    });
+  const onCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setState({ ...state, category: e.target.value });
   };
+
+  // Submit Buttons
   const onBudgetSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     updateTotalExp(budgetAmount, _id);
   };
   const onCategorySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateNewCategories(category, _id);
-    setState({ ...state, category: "" });
+    if (!category) {
+      setAlert("Category is Empty", "danger");
+    } else {
+      updateNewCategories(category, _id);
+      setState({ ...state, category: "" });
+    }
   };
   return (
     <Fragment>
@@ -80,7 +81,7 @@ const Settings: React.SFC<Props> = ({
             type="string"
             name="category"
             value={category}
-            onChange={e => onChange(e)}
+            onChange={e => onCategoryChange(e)}
           />
           <input type="submit" value="ADD" />
         </form>
@@ -92,10 +93,11 @@ const Settings: React.SFC<Props> = ({
 
 const mapStateToProps = (state: any) => ({
   _id: state.auth && state.auth.user ? state.auth.user._id : "",
-  amount: state.budget.amount && state.budget.amount ? state.budget.amount : undefined
+  amount:
+    state.budget.amount && state.budget.amount ? state.budget.amount : undefined
 });
 
 export default connect(
   mapStateToProps,
-  { updateTotalExp, updateNewCategories }
+  { updateTotalExp, updateNewCategories, setAlert }
 )(Settings);

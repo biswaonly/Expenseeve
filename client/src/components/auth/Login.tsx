@@ -31,6 +31,13 @@ const Login: React.SFC<LoginProps> = ({ login, isAuthenticated, setAlert }) => {
   // Submit Form
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email) {
+      setAlert("Enter your Email", "danger");
+    }
+    if (!password) {
+      setAlert("Enter your Password", "danger");
+    }
+
     login(email, password);
   };
 

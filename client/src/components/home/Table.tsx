@@ -12,7 +12,7 @@ const Table: React.SFC<Props> = ({ data }) => {
   return (
     <div>
       {data.map(item => (
-        <TableCards key={item._id} item={item}  />
+        <TableCards key={item._id} item={item} uid={item._id} />
       ))}
       <Pagination defaultCurrent={1} total={50} />
     </div>

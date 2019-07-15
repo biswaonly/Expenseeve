@@ -19,6 +19,7 @@ interface useStateInter {
   date: Date | any;
   userID: string;
   image: any;
+  imageInputFile: any;
 }
 
 const ExpForm: React.SFC<Props> = ({
@@ -33,7 +34,8 @@ const ExpForm: React.SFC<Props> = ({
     price: 0,
     date: new Date(),
     userID: _id,
-    image: ""
+    image: "",
+    imageInputFile: ""
   });
 
   const { category, itemName, price, date, image } = state;
@@ -41,8 +43,6 @@ const ExpForm: React.SFC<Props> = ({
   // Form Submit
   const createNewExp = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(state);
-
     addNewExpenses(state);
     setState({ ...state, itemName: "", price: 0 });
   };
@@ -66,15 +66,49 @@ const ExpForm: React.SFC<Props> = ({
   const addDate = (date: Date) => {
     setState({ ...state, date: date });
   };
+  var u;
 
   const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState({ ...state, image: (e.target as any).files[0] });
-    // console.log(image);
-    let aa = (e.target as any).files[0];
-    let data = new FormData();
-    data.append("inputname", image);
-    console.log(data.get("inputname"));
+    console.log((e.target as any).files[0]);
+    setState({ ...state, imageInputFile: (e.target as any).files[0] });
   };
+
+  const abc = async () => {
+    const fd = new FormData();
+    // fd.append("image", state.imageInputFile, state.imageInputFile.name);
+    // console.log(fd);
+
+    // const config = {
+    //   headers: {
+    //     Authorization: "Client-ID d14fc9df79960b7"
+    //   }
+    // };
+
+    // try {
+    //   const res = await axios.post(
+    //     "https://api.imgur.com/3/image/",
+    //     fd,
+    //     config
+    //   );
+    //   console.log(res);
+    // } catch (err) {
+    //   console.error(err);
+    // }
+
+    const r = new XMLHttpRequest();
+    fd.append("image", state.imageInputFile);
+
+    r.open("POST", "https://api.imgur.com/3/image/");
+    r.setRequestHeader("Authorization", `Client-ID d14fc9df79960b7`);
+    r.onreadystatechange = async function() {
+      if (r.status === 200 && r.readyState === 4) {
+        let res = await JSON.parse(r.responseText);
+        setState({ ...state, image: `https://i.imgur.com/${res.data.id}.png` });
+      }
+    };
+    r.send(fd);
+  };
+
   return (
     <form className="exp-form" onSubmit={e => createNewExp(e)}>
       <input type="button" value="Clear" onClick={funcExpHide} />
@@ -101,6 +135,7 @@ const ExpForm: React.SFC<Props> = ({
       />
       <DatePicker selected={date} onChange={addDate} placeholderText="date" />
       <input type="file" onChange={e => uploadImage(e)} />
+      <input type="button" onClick={abc} value="Image Upload" />
       <input type="submit" value="Update" />
     </form>
   );

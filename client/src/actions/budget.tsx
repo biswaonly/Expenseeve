@@ -8,14 +8,18 @@ import {
   POST_ERROR,
   SET_TOTAL_EXP,
   LOAD_BUDGET,
-  EDIT_CATEGORY
+  EDIT_CATEGORY,
+  DELETE_CATEGORY,
+  UNDO_DELETE_CATEGORY
 } from "./types";
+import { setTimerAlert } from "./timerAlert";
 
+// DID MOUNT CALL
 export const loadBudget = (id: string) => async (
   dispatch: ThunkDispatch<{}, {}, AnyAction>
 ) => {
   try {
-    const res = await Rest.post("/api/budget", { id });
+    const res = await Rest.get(`/api/budget/${id}`);
 
     dispatch({
       type: LOAD_BUDGET,
@@ -27,15 +31,14 @@ export const loadBudget = (id: string) => async (
   }
 };
 
+// Add or Edit total budget amount
 export const updateTotalExp = (amount: number, id: string) => async (
   dispatch: ThunkDispatch<{}, {}, AnyAction>
 ) => {
   const body = JSON.stringify({ amount, id });
 
   try {
-    const res = await Rest.post("/api/budget/total-exp", body);
-    console.log("AMOUNT ACTION RES", res);
-
+    const res = await Rest.post("/api/budget", body);
     dispatch({
       type: SET_TOTAL_EXP,
       payload: res.data
@@ -53,14 +56,12 @@ export const updateTotalExp = (amount: number, id: string) => async (
   }
 };
 
+// Add a new Category
 export const updateNewCategories = (category: string, id: string) => async (
   dispatch: ThunkDispatch<{}, {}, AnyAction>
 ) => {
-  const body = JSON.stringify({ category, id });
-
   try {
-    const res = await Rest.post("/api/budget/categories", body);
-    console.log(res.data);
+    const res = await Rest.put(`/api/budget/${id}/${category}`);
 
     dispatch({
       type: CHANGE_CATEGORY,
@@ -78,17 +79,16 @@ export const updateNewCategories = (category: string, id: string) => async (
   }
 };
 
+// Edit Category
 export const editCategory = (
   oldCat: string,
   newCat: string,
   id: string
 ) => async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
-  const body = JSON.stringify({ oldCat, newCat, id });
-
   try {
-    const res = await Rest.post("/api/budget/edit-cat", body);
-
-    console.log("RES === === == ", res.data);
+    const res = await Rest.put(
+      `/api/budget/edit-cat/${id}/${oldCat}/${newCat}`
+    );
 
     dispatch({
       type: EDIT_CATEGORY,
@@ -109,12 +109,12 @@ export const deleteCategory = (category: string, id: string) => async (
   dispatch: ThunkDispatch<{}, {}, AnyAction>
 ) => {
   try {
-    const res = await Rest.post("/api/budget/del-cat", { category, id });
-
     dispatch({
-      type: EDIT_CATEGORY,
-      payload: res.data
+      type: DELETE_CATEGORY,
+      payload: category
     });
+
+    dispatch(setTimerAlert("delete", `/api/budget/${id}/${category}`));
   } catch (err) {
     console.error(err);
     // Error Alerts
@@ -122,5 +122,21 @@ export const deleteCategory = (category: string, id: string) => async (
     if (errors) {
       errors.forEach((error: any) => dispatch(setAlert(error.msg, "danger")));
     }
+  }
+};
+
+// DELETE ONE CATEGORY
+export const undoDeleteCategory = (id: string) => async (
+  dispatch: ThunkDispatch<{}, {}, AnyAction>
+) => {
+  try {
+    const res = await Rest.get(`/api/budget/${id}`);
+
+    dispatch({
+      type: UNDO_DELETE_CATEGORY,
+      payload: res.data.categories
+    });
+  } catch (err) {
+    console.error(err);
   }
 };

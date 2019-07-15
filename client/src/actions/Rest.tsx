@@ -9,24 +9,21 @@ const config = {
 const baseURL = "http://localhost:5000";
 
 class RestService {
-  // constructor() {
-  //   this.baseUrl = baseURL;
-  //   this.header = {};
-  // }
-
-  async get(path: string, queryParam?: string) {
-    return await axios.get(`${baseURL}${path}`);
+  get(path: string) {
+    return axios.get(`${baseURL}${path}`);
   }
 
-  put(path: string, body: any) {}
+  put(path: string) {
+    return axios.put(`${baseURL}${path}`);
+  }
 
   post(path: string, body: any) {
-    console.log("REST ++ ", path, body);
-
     return axios.post(`${baseURL}${path}`, body, config);
   }
 
-  delete(path: string, id: any) {}
+  delete(path: string) {
+    return axios.delete(`${baseURL}${path}`);
+  }
 }
 
 const Rest = new RestService();

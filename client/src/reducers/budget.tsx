@@ -4,7 +4,9 @@ import {
   LOAD_BUDGET,
   CHANGE_CATEGORY,
   POST_ERROR,
-  EDIT_CATEGORY
+  EDIT_CATEGORY,
+  DELETE_CATEGORY,
+  UNDO_DELETE_CATEGORY
 } from "../actions/types";
 
 const initialState = {
@@ -20,9 +22,6 @@ export default function(state: BudgetStoreState = initialState, action: any) {
   console.log(payload);
 
   switch (type) {
-    case SET_TOTAL_EXP:
-      return { ...state, amount: payload };
-
     case LOAD_BUDGET:
       return {
         ...state,
@@ -30,17 +29,20 @@ export default function(state: BudgetStoreState = initialState, action: any) {
         categories: payload.categories
       };
 
+    case SET_TOTAL_EXP:
     case CHANGE_CATEGORY:
-      return { ...state, categories: [...payload] };
-
-    case POST_ERROR:
-      return {
-        ...state,
-        amount: 0
-      };
-
+    case UNDO_DELETE_CATEGORY:
     case EDIT_CATEGORY:
       return { ...state, categories: [...payload] };
+
+    case DELETE_CATEGORY:
+      return {
+        ...state,
+        categories: state.categories.filter(e => e !== payload)
+      };
+
+    case POST_ERROR:
+      return { ...state, amount: 0 };
 
     default:
       return state;

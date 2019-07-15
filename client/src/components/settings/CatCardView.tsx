@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
@@ -36,13 +35,10 @@ const CatCardView: React.SFC<Props> = ({
   );
 };
 
-CatCardView.propTypes = {
-  deleteCategory: PropTypes.func.isRequired
-};
-
 const mapStateToProps = (state: any) => ({
   _id: state.auth.user._id
 });
+
 export default connect(
   mapStateToProps,
   { deleteCategory }

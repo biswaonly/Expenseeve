@@ -15,6 +15,7 @@ import Settings from "./components/settings/Settings";
 import Profile from "./components/profile/Profile";
 import store from "./store";
 import PrivateRoute from "./components/routing/PrivateRoute";
+import TimerAlert from "./components/common/TimerAlert";
 
 function App() {
   useEffect(() => {
@@ -38,6 +39,7 @@ function App() {
                 <Route path="/settings" component={Settings} />
                 <Route path="/profile" component={Profile} />
               </Switch>
+              <TimerAlert />
             </section>
           </div>
         </div>

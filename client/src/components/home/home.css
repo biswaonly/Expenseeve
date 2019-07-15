@@ -22,3 +22,9 @@
 .table-cards-icon {
   font-size: 20px;
 }
+
+.i_have_image {
+  color: brown;
+  background-color: aqua;
+  cursor: pointer;
+}

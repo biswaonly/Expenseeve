@@ -20,74 +20,53 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// @route		POST api/auth
+// @route		GET api/auth/log
 // @desc		LOGIN User Authentication and send Token
 // @access	Public
-router.post(
-  "/",
-  [
-    check("email", "Please Enter a valid email").isEmail(),
-    check("password", "Password is Empty")
-      .not()
-      .isEmpty()
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
+router.get("/log/:email/:password", async (req, res) => {
+  const { email, password } = req.params;
 
-    // Find Errors
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+  try {
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ errors: [{ msg: `Invalid Credentials` }] });
     }
 
-    const { email, password } = req.body;
-    console.log("IUJGoid aoisho ==  /// / // / / // / ", email, password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
-    try {
-      let user = await User.findOne({ email });
-
-      console.log(user);
-
-      if (!user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: `Invalid Credentials` }] });
-      }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Password do not match" }] });
-      }
-
-      // JWT token generate
-      const payload = {
-        user: {
-          id: user.id
-        }
-      };
-      jwt.sign(
-        payload,
-        config.get("jwtSecret"),
-        { expiresIn: 360000 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).json({ errors: [{ msg: err.message }] });
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Password do not match" }] });
     }
+
+    // JWT token generate
+    const payload = {
+      user: {
+        id: user.id
+      }
+    };
+    jwt.sign(
+      payload,
+      config.get("jwtSecret"),
+      { expiresIn: 360000 },
+      (err, token) => {
+        if (err) throw err;
+        res.json({ token });
+      }
+    );
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ errors: [{ msg: err.message }] });
   }
-);
+});
 
-// @route		POST api/auth/register
+// @route		POST api/auth/log
 // @desc		REGISTER User data saved to the Database
 // @access	Public
 router.post(
-  "/register",
+  "/log",
   [
     check("name", "Please enter your name")
       .not()
@@ -101,26 +80,20 @@ router.post(
   async (req, res) => {
     // Check Errors
     const errors = validationResult(req);
-    console.log(errors);
 
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     const { name, email, password } = req.body;
-    console.log(name, email, password);
 
     try {
       // Check email already exists or not
       let user = await User.findOne({ email });
-      console.log(user);
-
       if (user) {
         return res
           .status(400)
           .json({ errors: [{ msg: "email already exists" }] });
       }
-
       user = new User({
         name,
         email,

@@ -5,7 +5,6 @@ import { loadBudget } from "./budget";
 import {
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  REGISTER_FAIL,
   USER_LOADED,
   AUTH_ERROR
 } from "./types";
@@ -22,7 +21,6 @@ export const loadUser = () => async (
 
   try {
     const res = await Rest.get("/api/auth");
-
     dispatch({
       type: USER_LOADED,
       payload: res.data
@@ -45,7 +43,7 @@ export const register = (
   const body = JSON.stringify({ name, email, password });
 
   try {
-    await Rest.post("/api/auth/register", body);
+    await Rest.post("/api/auth/log", body);
 
     // Redirect to Login after register
     history.push("/login");
@@ -55,11 +53,6 @@ export const register = (
     if (errors) {
       errors.forEach((error: any) => dispatch(setAlert(error.msg, "danger")));
     }
-    console.log(err);
-
-    dispatch({
-      type: REGISTER_FAIL
-    });
   }
 };
 
@@ -68,7 +61,7 @@ export const login = (email: string, password: string) => async (
   dispatch: ThunkDispatch<{}, {}, AnyAction>
 ) => {
   try {
-    const res = await Rest.post("/api/auth", { email, password });
+    const res = await Rest.get(`/api/auth/log/${email}/${password}`);
 
     dispatch({
       type: LOGIN_SUCCESS,
