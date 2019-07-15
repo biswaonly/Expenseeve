@@ -40,7 +40,4 @@ app.use("/api/budget", require("./routes/api/budget"));
 
 const port = 5000 || process.env.PORT;
 
-app.listen(port, () => {
-  // console.clear();
-  console.log(`Server has Started on port ${port}`);
-});
+app.listen(port, () => console.log(`Server has Started on port ${port}`));

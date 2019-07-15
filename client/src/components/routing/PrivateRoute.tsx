@@ -9,7 +9,7 @@ interface Props {
     isAuthenticated: boolean;
     loading: boolean;
   };
-  rest: any;
+  exact?: boolean;
 }
 
 const PrivateRoute: React.SFC<Props> = ({

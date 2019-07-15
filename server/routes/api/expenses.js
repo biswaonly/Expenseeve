@@ -24,7 +24,6 @@ router.post(
       .isEmpty()
   ],
   async (req, res) => {
-    console.log("======BODY======", req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -35,7 +34,6 @@ router.post(
       let newExp = new Exp({ category, itemName, price, date, userID, image });
 
       newExp.deleted = false;
-      console.log("=====NEW=====", newExp);
 
       await newExp.save();
 
@@ -60,28 +58,19 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/test/:id", (req, res) => {
-  console.log("/test");
-  res.send("success");
-});
 // @route 	POST api/budget/categories
 // @desc 		Add new Categories
 // @access 	Private
 router.delete("/delete/:id", async (req, res) => {
-  console.log("============= /// \\ =================", req.params);
-
   try {
     await Exp.findOneAndUpdate(
       { _id: req.params.id },
       { $set: { deleted: true } },
       (err, doc) => {
         if (err) {
-          console.log("Something wrong when updating data!");
         }
-        console.log(doc);
       }
     );
-
     res.json(req.params.id);
   } catch (err) {
     console.error(err.message);

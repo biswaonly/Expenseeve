@@ -19,7 +19,6 @@ import TimerAlert from "./components/common/TimerAlert";
 
 function App() {
   useEffect(() => {
-    console.log("COMPONENT DID MOUNT");
     store.dispatch(loadUser() as any);
   }, []);
 
@@ -35,9 +34,9 @@ function App() {
               <Switch>
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
-                <Route exact path="/" component={Home} />
-                <Route path="/settings" component={Settings} />
-                <Route path="/profile" component={Profile} />
+                <PrivateRoute exact path="/" component={Home} />
+                <PrivateRoute path="/settings" component={Settings} />
+                <PrivateRoute path="/profile" component={Profile} />
               </Switch>
               <TimerAlert />
             </section>

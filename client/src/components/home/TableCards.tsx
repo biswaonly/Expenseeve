@@ -23,16 +23,13 @@ const TableCards: React.SFC<Props> = ({ item, deleteExpenses, uid }) => {
   const [state, setState] = useState({
     editIt: false
   });
-  console.log(item.image);
 
   const editExpence = (id: string) => {
-    console.log(item.image);
 
     setState({ ...state, editIt: true });
   };
   const deleteExpence = (id: string) => {
     deleteExpenses(id);
-    // console.log(item);
   };
   const openImage = () => {
     window.open(item.image, "_blank");
